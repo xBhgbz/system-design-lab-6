@@ -4,10 +4,8 @@ project(HotelBookingAPI)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Поиск пакетов Poco
 find_package(Poco REQUIRED COMPONENTS Foundation Net Util JSON)
 
-# Поиск SimpleAmqpClient (старая версия)
 find_path(SIMPLEAMQPCLIENT_INCLUDE_DIRS
     NAMES SimpleAmqpClient.h
     PATHS /usr/local/include/SimpleAmqpClient /usr/include/SimpleAmqpClient
@@ -20,24 +18,20 @@ find_library(SIMPLEAMQPCLIENT_LIBRARY
     REQUIRED
 )
 
-# Поиск RabbitMQ C library
 find_library(RABBITMQ_LIBRARY
     NAMES rabbitmq
     PATHS /usr/local/lib /usr/lib
     REQUIRED
 )
 
-# Поиск Boost
 find_package(Boost REQUIRED COMPONENTS system thread)
 
-# Выводим найденные пути для отладки
 message(STATUS "SIMPLEAMQPCLIENT_INCLUDE_DIRS: ${SIMPLEAMQPCLIENT_INCLUDE_DIRS}")
 message(STATUS "SIMPLEAMQPCLIENT_LIBRARY: ${SIMPLEAMQPCLIENT_LIBRARY}")
 message(STATUS "RABBITMQ_LIBRARY: ${RABBITMQ_LIBRARY}")
 
 include_directories(include ${Poco_INCLUDE_DIRS} ${SIMPLEAMQPCLIENT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-# API исходные файлы
 set(API_SOURCES
     src/main.cpp
     src/storage.cpp
@@ -46,7 +40,6 @@ set(API_SOURCES
     src/event_producer.cpp
 )
 
-# Consumer исходные файлы
 set(CONSUMER_SOURCES
     src/consumer_main.cpp
     src/event_consumer.cpp
@@ -55,7 +48,6 @@ set(CONSUMER_SOURCES
 add_executable(api ${API_SOURCES})
 add_executable(consumer ${CONSUMER_SOURCES})
 
-# Линковка библиотек для API
 target_link_libraries(api 
     ${Poco_LIBRARIES} 
     ${SIMPLEAMQPCLIENT_LIBRARY}
@@ -65,7 +57,6 @@ target_link_libraries(api
     dl
 )
 
-# Линковка библиотек для Consumer
 target_link_libraries(consumer 
     ${Poco_LIBRARIES} 
     ${SIMPLEAMQPCLIENT_LIBRARY}
